@@ -18,23 +18,23 @@ func MakeUI() *container.TabItem {
 	cipher.Resize(fyne.NewSize(800, 150))
 	cipher.Move(fyne.NewPos(10, 220))
 
-	base := widget.NewButton("base64", func() {
+	baseBtn := widget.NewButton("base64", func() {
 		cipher.SetText(base64.StdEncoding.EncodeToString([]byte(plain.Text)))
 	})
-	base.Resize(fyne.NewSize(80, 40))
-	base.Move(fyne.NewPos(10, 170))
+	baseBtn.Resize(fyne.NewSize(80, 40))
+	baseBtn.Move(fyne.NewPos(10, 170))
 
-	debase := widget.NewButton("debase64", func() {
+	debaseBtn := widget.NewButton("debase64", func() {
 		tmp, _ := base64.StdEncoding.DecodeString(cipher.Text)
 		plain.SetText(string(tmp))
 	})
-	debase.Resize(fyne.NewSize(80, 40))
-	debase.Move(fyne.NewPos(100, 170))
+	debaseBtn.Resize(fyne.NewSize(80, 40))
+	debaseBtn.Move(fyne.NewPos(100, 170))
 
 	tool := container.NewTabItem("Base64", container.NewWithoutLayout(
 		plain,
-		base,
-		debase,
+		baseBtn,
+		debaseBtn,
 		cipher,
 	))
 	return tool
