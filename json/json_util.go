@@ -3,51 +3,58 @@ package json
 import (
 	"bytes"
 	"encoding/json"
+	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/container"
 	"fyne.io/fyne/v2/widget"
 	"github.com/atotto/clipboard"
 )
 
-func format(input *widget.Entry) {
-	if len(input.Text) == 0 {
+func format(textArea *widget.Entry) {
+	if len(textArea.Text) == 0 {
 		return
 	}
 
 	var str bytes.Buffer
-	_ = json.Indent(&str, []byte(input.Text), "", "    ")
-	input.SetText(str.String())
+	_ = json.Indent(&str, []byte(textArea.Text), "", "    ")
+	textArea.SetText(str.String())
 }
 
-func compact(input *widget.Entry) {
-	if len(input.Text) == 0 {
+func compact(textArea *widget.Entry) {
+	if len(textArea.Text) == 0 {
 		return
 	}
 
 	var str bytes.Buffer
-	_ = json.Compact(&str, []byte(input.Text))
-	input.SetText(str.String())
+	_ = json.Compact(&str, []byte(textArea.Text))
+	textArea.SetText(str.String())
 }
 
-func Canvas() *container.TabItem {
-	input := widget.NewMultiLineEntry()
-	input.SetPlaceHolder("please input json...")
+func MakeUI() *container.TabItem {
+	textArea := widget.NewMultiLineEntry()
+	textArea.SetPlaceHolder("please input json...")
+	textArea.Resize(fyne.NewSize(800, 300))
+	textArea.Move(fyne.NewPos(10, 60))
 
-	textArea := container.NewMax(input)
+	formatBtn := widget.NewButton("format", func() {
+		format(textArea)
+	})
+	formatBtn.Resize(fyne.NewSize(80, 40))
+	formatBtn.Move(fyne.NewPos(10, 10))
 
-	buttons := container.NewHBox(
-		widget.NewButton("format", func() {
-			format(input)
-		}),
-		widget.NewButton("compact", func() {
-			compact(input)
-		}),
-		widget.NewButton("copy", func() {
-			_ = clipboard.WriteAll(input.Text)
-		}),
-	)
+	compactBtn := widget.NewButton("compact", func() {
+		compact(textArea)
+	})
+	compactBtn.Resize(fyne.NewSize(80, 40))
+	compactBtn.Move(fyne.NewPos(100, 10))
 
-	tool := container.NewTabItem("JSON", container.NewVBox(
-		buttons,
+	copyBtn := widget.NewButton("copy", func() {
+		_ = clipboard.WriteAll(textArea.Text)
+	})
+	copyBtn.Resize(fyne.NewSize(80, 40))
+	copyBtn.Move(fyne.NewPos(190, 10))
+
+	tool := container.NewTabItem("JSON", container.NewWithoutLayout(
+		formatBtn, compactBtn, copyBtn,
 		textArea,
 	))
 	return tool
